@@ -19,6 +19,20 @@ Pacman agents (in searchAgents.py).
 
 import util
 
+class node:
+
+    def __init__(self,parent,state,children):
+
+        self.parent = parent
+        self.children = children
+        self.state = state
+    
+    def addChild(self,child):
+        self.children.append(child)
+
+    def getChildren(self):
+        return self.children
+
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
@@ -82,16 +96,86 @@ def depthFirstSearch(problem: SearchProblem):
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
     """
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    startState =  problem.getStartState()
+    
+    tree = node(None,[startState],[])
+    visited = []
+    frontier = [tree]
+    
+    print("search begins at ",startState)
+    while (len(frontier) > 0):
+        
+        current = frontier[-1]
+        isGoal =  problem.isGoalState(current.state[0])
+        if (isGoal):
+            break
+        
+        if (not current.state[0] in visited):
+            #get the children of the last node put into frontier
+            visited.append(current.state[0])
+            childNodes = problem.getSuccessors(current.state[0])
+
+            for state in childNodes:
+                childNode = node(current,state,[])
+                current.addChild(childNode)
+                frontier.append(childNode)
+        else:
+            frontier.pop()
+
+    #creating a path by walking back from the discovered goal node to the origin
+    #this is accomplished by moving back up the tree from the goal node while adding the action taken from parent to child to a LIFO queue which is then output as a path
+
+    current = frontier[-1]
+    pIndex = 0
+    path = []
+    while current.parent != None:
+        path.insert(0,current.state[1])
+        current = current.parent
+        pIndex += 1
+
+    return path
+
 
 def breadthFirstSearch(problem: SearchProblem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    startState =  problem.getStartState()
+
+    tree = node(None,[startState],[])
+    visited = []
+    frontier = [tree]
+    
+    print("search begins at ",startState)
+    while (len(frontier) > 0):
+        
+        current = frontier[0]
+        isGoal =  problem.isGoalState(current.state[0])
+        if (isGoal):
+            break
+        
+        if (not current.state[0] in visited):
+            #get the children of the last node put into frontier
+            visited.append(current.state[0])
+            childNodes = problem.getSuccessors(current.state[0])
+
+            for state in childNodes:
+                childNode = node(current,state,[])
+                current.addChild(childNode)
+                frontier.append(childNode)
+        else:
+            frontier.pop(0)
+
+    #creating a path by walking back from the discovered goal node to the origin
+    #this is accomplished by moving back up the tree from the goal node while adding the action taken from parent to child to a LIFO queue which is then output as a path
+
+    current = frontier[0]
+    pIndex = 0
+    path = []
+    while current.parent != None:
+        path.insert(0,current.state[1])
+        current = current.parent
+        pIndex += 1
+
+    return path
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
