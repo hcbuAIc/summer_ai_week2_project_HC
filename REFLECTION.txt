@@ -1,0 +1,3 @@
+this assignment went pretty fast for me because I was able to implement DFS
+quickly which with 2 lines changed became BFS. I was even able to incorporate
+the basic node structure into my group's final project codebase.
